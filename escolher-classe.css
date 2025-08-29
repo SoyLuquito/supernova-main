@@ -1,0 +1,99 @@
+/* escolher-classe.css */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: url('./img/background.gif') no-repeat center center fixed;
+    background-size: cover;
+    margin: 0;
+    padding: 20px;
+    font-family: 'Poppins', sans-serif;
+    color: white;
+}
+
+.container {
+    width: 100%;
+    max-width: 800px;
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    padding: 30px;
+    text-align: center;
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.classes-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+    margin-top: 2rem;
+}
+
+.classe-card {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    padding: 20px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.classe-card:hover {
+    transform: translateY(-5px);
+    background: rgba(0, 0, 0, 0.5);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.classe-img {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    margin-bottom: 1rem;
+}
+
+.classe-card h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.classe-card p {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+    }
+    
+    .classes-container {
+        grid-template-columns: 1fr;
+    }
+    
+    h1 {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 15px;
+    }
+    
+    .classe-card {
+        padding: 15px;
+    }
+    
+    .classe-img {
+        width: 80px;
+        height: 80px;
+    }
+}

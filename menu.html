@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="menu.css">
+    <title>Menu Principal - RPG</title>
+    <style>
+        /* Adicionando estilos para os submenus */
+        .submenu {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .submenu.active {
+            display: flex;
+        }
+        
+        .submenu-btn {
+            padding: 12px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .submenu-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .hunting-btn:hover {
+            border-color: #55ff55;
+            color: #55ff55;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .hunting-field-btn {
+            background-color: rgba(85, 255, 85, 0.1);
+        }
+        
+        .hunting-field-btn:hover {
+            background-color: rgba(85, 255, 85, 0.2);
+        }
+    </style>
+</head>
+
+<body>
+    <main class="main-container">
+        <!-- Painel do Personagem (Esquerda) -->
+        <div class="character-panel">
+            <div class="portrait-container">
+                <img src="./img/classes/default.png" alt="Personagem" class="character-gif" id="character-image">
+            </div>
+            
+            <div class="character-stats">
+                <h2 class="character-name" id="nome-personagem">Carregando...</h2>
+                <p class="character-class" id="classe-personagem">-</p>
+                
+                <div class="stat-bar">
+                    <label>HP:</label>
+                    <div class="bar-container">
+                        <div class="bar hp-bar" style="width: 0%"></div>
+                        <span>0/0</span>
+                    </div>
+                </div>
+                
+                <div class="stat-bar">
+                    <label>Mana:</label>
+                    <div class="bar-container">
+                        <div class="bar mana-bar" style="width: 0%"></div>
+                        <span>0/0</span>
+                    </div>
+                </div>
+                
+                <div class="stat-bar">
+                    <label>XP:</label>
+                    <div class="bar-container">
+                        <div class="bar xp-bar" style="width: 0%"></div>
+                        <span>0/0</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="character-menu">
+                <button class="char-btn"><i class='bx bx-stats'></i> Atributos</button>
+                <button class="char-btn"><i class='bx bx-run'></i> Habilidades</button>
+                <button class="char-btn"><i class='bx bx-cube'></i> Inventário</button>
+            </div>
+        </div>
+        
+        <!-- Menu Principal (Centro) -->
+        <div class="main-menu">
+            <h1 class="game-title">Menu Principal</h1>
+            <p class="welcome-message" id="welcome-message">Carregando...</p>
+            
+            <div class="location-buttons">
+                <button class="location-btn city-btn">
+                    <i class='bx bx-buildings'></i> Cidade
+                </button>
+                
+                <!-- Botão de Campos de Caça -->
+                <button class="location-btn hunting-btn" id="hunting-btn">
+                    <i class='bx bx-map'></i> Campos de Caça
+                </button>
+                
+                <!-- Submenu de Campos de Caça -->
+                <div class="submenu" id="hunting-submenu">
+                    <button class="submenu-btn hunting-field-btn" id="field-c1">
+                        <i class='bx bx-leaf'></i> Campo C1
+                    </button>
+                    <button class="submenu-btn hunting-field-btn" disabled>
+                        <i class='bx bx-leaf'></i> Campo C2 (Em breve)
+                    </button>
+                    <button class="submenu-btn hunting-field-btn" disabled>
+                        <i class='bx bx-leaf'></i> Campo C3 (Em breve)
+                    </button>
+                </div>
+                
+                <button class="location-btn dungeon-btn">
+                    <i class='bx bx-door-open'></i> Masmorras
+                </button>
+                <button class="location-btn boss-btn">
+                    <i class='bx bx-skull'></i> Boss
+                </button>
+                <button class="location-btn logout-btn">
+                    <i class='bx bx-log-out'></i> Deslogar
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Importações do Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js";
+
+        // Configuração do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBzdrAtJoBUONdyHsEPrzWDTH9FMg1xW78",
+            authDomain: "supernova-372bf.firebaseapp.com",
+            projectId: "supernova-372bf",
+            storageBucket: "supernova-372bf.appspot.com",
+            messagingSenderId: "917055386010",
+            appId: "1:917055386010:web:3f27d9173e3dd7fbdf8a23"
+        };
+
+        // Inicialização
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Sistema de XP e HP
+        const XpSystem = {
+            calculateMaxHp: function(level) {
+                return 100 + (Math.pow(level || 1, 2) * 2);
+            },
+            
+            calculateXpNeeded: function(level) {
+                return 94495 * Math.pow(1.05826, level || 1);
+            },
+            
+            capitalizeFirstLetter: function(string) {
+                return string ? string.charAt(0).toUpperCase() + string.slice(1) : "";
+            },
+            
+            updateStatusBar: function(selector, current, max) {
+                if (current === undefined || max === undefined) return;
+                const percent = (current / max) * 100;
+                const bar = document.querySelector(selector);
+                if (bar) {
+                    bar.style.width = `${percent}%`;
+                    const span = bar.nextElementSibling;
+                    if (span) span.textContent = `${Math.floor(current)}/${Math.floor(max)}`;
+                }
+            },
+            
+            updatePlayerUI: function(playerData) {
+                try {
+                    playerData = playerData || {};
+                    
+                    // Atualiza textos básicos
+                    document.getElementById('nome-personagem').textContent = 
+                        playerData.nome || playerData.username || "Aventureiro";
+                    
+                    document.getElementById('classe-personagem').textContent = 
+                        `${this.capitalizeFirstLetter(playerData.classe || 'Aventureiro')} - Nível ${playerData.nivel || 1}`;
+                    
+                    document.getElementById('welcome-message').textContent = 
+                        `Bem-vindo de volta, ${playerData.nome || playerData.username || 'Aventureiro'}!`;
+                    
+                    // Atualiza barras de status
+                    const maxHp = this.calculateMaxHp(playerData.nivel);
+                    this.updateStatusBar('.hp-bar', playerData.hp || maxHp, maxHp);
+                    
+                    this.updateStatusBar('.mana-bar', playerData.mana || 0, playerData.mana_max || 100);
+                    
+                    const xpNeeded = this.calculateXpNeeded(playerData.nivel);
+                    this.updateStatusBar('.xp-bar', playerData.experiencia || 0, xpNeeded);
+                    
+                    // Atualiza imagem
+                    const img = document.getElementById('character-image');
+                    if (playerData.classe) {
+                        img.src = `./img/classes/${playerData.classe.toLowerCase()}.gif`;
+                        img.onerror = () => img.src = './img/classes/default.png';
+                    }
+                } catch (error) {
+                    console.error("Erro ao atualizar UI:", error);
+                }
+            }
+        };
+
+        // Função para carregar dados do jogador
+        async function loadPlayerData(userId) {
+            try {
+                const userDoc = await getDoc(doc(db, "usuarios", userId));
+                
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    XpSystem.updatePlayerUI(userData);
+                    return userData;
+                } else {
+                    console.error("Documento do usuário não encontrado");
+                    window.location.href = 'escolher-classe.html';
+                }
+            } catch (error) {
+                console.error("Erro ao carregar dados:", error);
+            }
+        }
+
+        // Monitora o estado de autenticação
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            // Carrega dados inicialmente
+            loadPlayerData(user.uid);
+            
+            // Configura listener para atualizações em tempo real
+            const userRef = doc(db, "usuarios", user.uid);
+            onSnapshot(userRef, (doc) => {
+                const userData = doc.data();
+                XpSystem.updatePlayerUI(userData);
+            });
+        });
+
+        // Logout
+        document.querySelector('.logout-btn').addEventListener('click', async (e) => {
+            e.preventDefault();
+            try {
+                await signOut(auth);
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error("Erro ao deslogar:", error);
+                alert("Erro ao deslogar. Por favor, tente novamente.");
+            }
+        });
+
+        // Controle do submenu de Campos de Caça
+        const huntingBtn = document.getElementById('hunting-btn');
+        const huntingSubmenu = document.getElementById('hunting-submenu');
+        const fieldC1Btn = document.getElementById('field-c1');
+
+        huntingBtn.addEventListener('click', () => {
+            huntingSubmenu.classList.toggle('active');
+        });
+
+        fieldC1Btn.addEventListener('click', () => {
+            window.location.href = 'zona-C1.html';
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Combate - Campo C1</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: url('./img/background/campos/BackC1.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #fff;
+        }
+
+        .combat-container {
+            display: flex;
+            flex-direction: column;
+            width: 900px;
+            background-color: rgba(0, 0, 0, 0.6);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(5px);
+        }
+
+        .combat-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+
+        .zone-indicator {
+            font-size: 16px;
+            color: #aaa;
+            margin-bottom: 5px;
+        }
+
+        .turn-indicator {
+            font-size: 18px;
+            color: gold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .combat-area {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 300px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .combatant {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 200px;
+        }
+
+        .combatant.player {
+            order: 1;
+        }
+
+        .combatant.enemy {
+            order: 3;
+        }
+
+        .combat-sprite {
+            width: 150px;
+            height: 150px;
+            object-fit: contain;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+        }
+
+        .player-sprite {
+            transform: scaleX(-1);
+        }
+
+        .combatant-name {
+            font-size: 18px;
+            color: white;
+            margin-bottom: 5px;
+        }
+
+        .combatant-stats {
+            width: 100%;
+            text-align: center;
+        }
+
+        .stat-bar {
+            margin-bottom: 5px;
+        }
+
+        .bar-container {
+            position: relative;
+            height: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .bar {
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+
+        .hp-bar {
+            background: linear-gradient(90deg, #ff0000, #ff6a6a);
+        }
+
+        .mana-bar {
+            background: linear-gradient(90deg, #0066ff, #00b4ff);
+        }
+
+        .bar-container span {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 10px;
+            color: white;
+            text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+        }
+
+        .combat-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            padding: 12px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .action-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .attack-btn:hover {
+            border-color: #ff5555;
+            color: #ff5555;
+        }
+
+        .skills-btn:hover {
+            border-color: #55aaff;
+            color: #55aaff;
+        }
+
+        .inventory-btn:hover {
+            border-color: #55ff55;
+            color: #55ff55;
+        }
+
+        .flee-btn:hover {
+            border-color: #ffaa55;
+            color: #ffaa55;
+        }
+
+        .combat-log {
+            height: 100px;
+            overflow-y: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 20px;
+            font-size: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .log-entry {
+            margin-bottom: 5px;
+            padding-bottom: 5px;
+            border-bottom: 1px dotted rgba(255, 255, 255, 0.1);
+        }
+
+        .player-log {
+            color: #55aaff;
+        }
+
+        .enemy-log {
+            color: #ff5555;
+        }
+
+        .system-log {
+            color: #aaaaaa;
+            font-style: italic;
+        }
+
+        @keyframes attackAnimation {
+            0% { transform: translateX(0) scaleX(-1); }
+            50% { transform: translateX(200px) scaleX(-1); }
+            100% { transform: translateX(0) scaleX(-1); }
+        }
+
+        .player-attack {
+            animation: attackAnimation 0.5s ease-in-out;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: rgba(0, 0, 0, 0.8);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            color: gold;
+            margin-bottom: 20px;
+        }
+
+        .modal-message {
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .modal-btn {
+            padding: 10px 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .combat-container {
+                width: 95%;
+                padding: 15px;
+            }
+
+            .combat-area {
+                height: auto;
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .combatant {
+                width: 150px;
+            }
+
+            .combat-sprite {
+                width: 100px;
+                height: 100px;
+            }
+
+            .combat-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="combat-container">
+        <div class="combat-header">
+            <div class="zone-indicator">Campo C1</div>
+            <div class="turn-indicator">Seu Turno</div>
+        </div>
+
+        <div class="combat-area">
+            <div class="combatant player">
+                <img src="./img/classes/estudioso.png" alt="Jogador" class="combat-sprite player-sprite" id="player-sprite">
+                <div class="combatant-name">Estudioso</div>
+                <div class="combatant-stats">
+                    <div class="stat-bar">
+                        <div class="bar-container">
+                            <div class="bar hp-bar" id="player-hp-bar" style="width: 100%;"></div>
+                            <span id="player-hp-text">100/100</span>
+                        </div>
+                    </div>
+                    <div class="stat-bar">
+                        <div class="bar-container">
+                            <div class="bar mana-bar" id="player-mana-bar" style="width: 100%;"></div>
+                            <span id="player-mana-text">50/50</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="combatant enemy">
+                <img src="" alt="Inimigo" class="combat-sprite" id="enemy-sprite">
+                <div class="combatant-name" id="enemy-name">Carregando inimigo...</div>
+                <div class="combatant-stats">
+                    <div class="stat-bar">
+                        <div class="bar-container">
+                            <div class="bar hp-bar" id="enemy-hp-bar"></div>
+                            <span id="enemy-hp-text">?/?</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="combat-actions">
+            <button class="action-btn attack-btn" id="attack-btn">
+                <i class="fas fa-sword"></i> Atacar
+            </button>
+            <button class="action-btn skills-btn" id="skills-btn" disabled>
+                <i class="fas fa-sparkles"></i> Habilidades
+            </button>
+            <button class="action-btn inventory-btn" id="inventory-btn" disabled>
+                <i class="fas fa-backpack"></i> Inventário
+            </button>
+            <button class="action-btn flee-btn" id="flee-btn">
+                <i class="fas fa-running"></i> Fugir
+            </button>
+        </div>
+
+        <div class="combat-log" id="combat-log">
+            <div class="log-entry system-log">Entrando no Campo C1...</div>
+        </div>
+    </div>
+
+    <div class="modal" id="flee-modal">
+        <div class="modal-content">
+            <div class="modal-title">Fuga</div>
+            <div class="modal-message">Você fugiu da batalha!</div>
+            <button class="modal-btn" id="flee-confirm-btn">Voltar ao Menu</button>
+        </div>
+    </div>
+
+    <div class="modal" id="victory-modal">
+        <div class="modal-content">
+            <div class="modal-title">Vitória!</div>
+            <div class="modal-message">Você derrotou o inimigo!</div>
+            <button class="modal-btn" id="victory-btn">Continuar</button>
+        </div>
+    </div>
+
+    <div class="modal" id="defeat-modal">
+        <div class="modal-content">
+            <div class="modal-title">Derrota</div>
+            <div class="modal-message">Você foi derrotado!</div>
+            <button class="modal-btn" id="defeat-btn">Voltar ao Menu</button>
+        </div>
+    </div>
+
+    <!-- Firebase e código do jogo -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Configuração do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBzdrAtJoBUONdyHsEPrzWDTH9FMg1xW78",
+            authDomain: "supernova-372bf.firebaseapp.com",
+            projectId: "supernova-372bf",
+            storageBucket: "supernova-372bf.appspot.com",
+            messagingSenderId: "917055386010",
+            appId: "1:917055386010:web:3f27d9173e3dd7fbdf8a23"
+        };
+
+        // Inicializa o Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Variáveis do jogo
+        const player = {
+            maxHp: 100,
+            hp: 100,
+            maxMana: 50,
+            mana: 50,
+            attackDamage: 10
+        };
+
+        const enemy = {
+            maxHp: 0,
+            hp: 0,
+            minDamage: 0,
+            maxDamage: 0,
+            name: "",
+            sprite: ""
+        };
+
+        let isPlayerTurn = true;
+
+        // Elementos do DOM
+        const playerHpBar = document.getElementById('player-hp-bar');
+        const playerHpText = document.getElementById('player-hp-text');
+        const playerManaBar = document.getElementById('player-mana-bar');
+        const playerManaText = document.getElementById('player-mana-text');
+        const enemyHpBar = document.getElementById('enemy-hp-bar');
+        const enemyHpText = document.getElementById('enemy-hp-text');
+        const enemyName = document.getElementById('enemy-name');
+        const enemySprite = document.getElementById('enemy-sprite');
+        const turnIndicator = document.querySelector('.turn-indicator');
+        const attackBtn = document.getElementById('attack-btn');
+        const skillsBtn = document.getElementById('skills-btn');
+        const inventoryBtn = document.getElementById('inventory-btn');
+        const fleeBtn = document.getElementById('flee-btn');
+        const combatLog = document.getElementById('combat-log');
+        const playerSprite = document.getElementById('player-sprite');
+
+        // Modais
+        const fleeModal = document.getElementById('flee-modal');
+        const victoryModal = document.getElementById('victory-modal');
+        const defeatModal = document.getElementById('defeat-modal');
+        const fleeConfirmBtn = document.getElementById('flee-confirm-btn');
+        const victoryBtn = document.getElementById('victory-btn');
+        const defeatBtn = document.getElementById('defeat-btn');
+
+        // Função para buscar um inimigo aleatório da zona C1
+        async function getRandomEnemyByZone(zone) {
+            try {
+                const enemiesRef = collection(db, "enemies");
+                const q = query(enemiesRef, where("zone", "==", zone));
+                const querySnapshot = await getDocs(q);
+
+                const enemies = [];
+                querySnapshot.forEach((doc) => {
+                    enemies.push({ id: doc.id, ...doc.data() });
+                });
+
+                if (enemies.length > 0) {
+                    return enemies[Math.floor(Math.random() * enemies.length)];
+                } else {
+                    console.error("Nenhum inimigo encontrado nesta zona!");
+                    return null;
+                }
+            } catch (error) {
+                console.error("Erro ao buscar inimigos:", error);
+                return null;
+            }
+        }
+
+        // Função para carregar os dados do inimigo
+        async function loadEnemy() {
+            const enemyData = await getRandomEnemyByZone("C1");
+            
+            if (enemyData) {
+                enemy.name = enemyData.name;
+                enemy.maxHp = parseInt(enemyData.maxHp);
+                enemy.hp = enemy.maxHp;
+                enemy.minDamage = parseInt(enemyData.minDamage);
+                enemy.maxDamage = parseInt(enemyData.maxDamage);
+                enemy.sprite = enemyData.sprite;
+
+                // Atualiza a UI
+                enemyName.textContent = enemy.name;
+                enemySprite.src = `./img/enemyC1/${enemy.sprite}`;
+                
+                updateBars();
+                addLogMessage(`Um ${enemy.name} apareceu!`, "system");
+            } else {
+                // Fallback caso não encontre inimigos
+                enemy.name = "Slime";
+                enemy.maxHp = 50;
+                enemy.hp = 50;
+                enemy.minDamage = 5;
+                enemy.maxDamage = 10;
+                enemy.sprite = "slime.png";
+
+                enemyName.textContent = enemy.name;
+                enemySprite.src = `./img/enemyC1/${enemy.sprite}`;
+                updateBars();
+                addLogMessage("Um Slime apareceu!", "system");
+            }
+        }
+
+        // Atualizar barras de status
+        function updateBars() {
+            // Jogador
+            const playerHpPercent = (player.hp / player.maxHp) * 100;
+            playerHpBar.style.width = `${playerHpPercent}%`;
+            playerHpText.textContent = `${player.hp}/${player.maxHp}`;
+
+            const playerManaPercent = (player.mana / player.maxMana) * 100;
+            playerManaBar.style.width = `${playerManaPercent}%`;
+            playerManaText.textContent = `${player.mana}/${player.maxMana}`;
+
+            // Inimigo
+            const enemyHpPercent = (enemy.hp / enemy.maxHp) * 100;
+            enemyHpBar.style.width = `${enemyHpPercent}%`;
+            enemyHpText.textContent = `${enemy.hp}/${enemy.maxHp}`;
+        }
+
+        // Adicionar mensagem ao log
+        function addLogMessage(message, type = 'system') {
+            const logEntry = document.createElement('div');
+            logEntry.classList.add('log-entry', `${type}-log`);
+            logEntry.textContent = message;
+            combatLog.appendChild(logEntry);
+            combatLog.scrollTop = combatLog.scrollHeight;
+        }
+
+        // Ataque do jogador
+        function playerAttack() {
+            if (!isPlayerTurn) return;
+
+            // Animação de ataque
+            playerSprite.classList.add('player-attack');
+            setTimeout(() => {
+                playerSprite.classList.remove('player-attack');
+            }, 500);
+
+            // Calcular dano
+            enemy.hp -= player.attackDamage;
+            if (enemy.hp < 0) enemy.hp = 0;
+
+            addLogMessage(`Você atacou ${enemy.name} e causou ${player.attackDamage} de dano!`, 'player');
+            updateBars();
+
+            // Verificar se o inimigo morreu
+            if (enemy.hp <= 0) {
+                setTimeout(() => {
+                    addLogMessage(`Você derrotou ${enemy.name}!`, 'system');
+                    victoryModal.style.display = 'flex';
+                }, 1000);
+                return;
+            }
+
+            // Passar o turno para o inimigo
+            isPlayerTurn = false;
+            turnIndicator.textContent = 'Turno do Inimigo';
+
+            // Ataque do inimigo após um pequeno delay
+            setTimeout(enemyAttack, 1500);
+        }
+
+        // Ataque do inimigo
+        function enemyAttack() {
+            // Calcular dano aleatório
+            const damage = Math.floor(Math.random() * (enemy.maxDamage - enemy.minDamage + 1)) + enemy.minDamage;
+            player.hp -= damage;
+            if (player.hp < 0) player.hp = 0;
+
+            addLogMessage(`${enemy.name} atacou você e causou ${damage} de dano!`, 'enemy');
+            updateBars();
+
+            // Verificar se o jogador morreu
+            if (player.hp <= 0) {
+                setTimeout(() => {
+                    addLogMessage(`Você foi derrotado por ${enemy.name}!`, 'system');
+                    defeatModal.style.display = 'flex';
+                }, 1000);
+                return;
+            }
+
+            // Passar o turno para o jogador
+            isPlayerTurn = true;
+            turnIndicator.textContent = 'Seu Turno';
+        }
+
+        // Tentar fugir
+        function tryToFlee() {
+            fleeModal.style.display = 'flex';
+        }
+
+        // Event listeners
+        attackBtn.addEventListener('click', playerAttack);
+        fleeBtn.addEventListener('click', tryToFlee);
+
+        fleeConfirmBtn.addEventListener('click', () => {
+            window.location.href = 'menu.html';
+        });
+
+        victoryBtn.addEventListener('click', () => {
+            // Aqui você pode adicionar lógica para recompensas
+            window.location.href = 'mapa.html'; // Ou outra página
+        });
+
+        defeatBtn.addEventListener('click', () => {
+            window.location.href = 'menu.html';
+        });
+
+        // Inicializar o combate
+        loadEnemy();
+        updateBars();
+    </script>
+</body>
+</html>

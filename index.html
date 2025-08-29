@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="index.css">
+    <title>Supernova - Login</title>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBzdrAtJoBUONdyHsEPrzWDTH9FMg1xW78",
+            authDomain: "supernova-372bf.firebaseapp.com",
+            projectId: "supernova-372bf",
+            storageBucket: "supernova-372bf.appspot.com",
+            messagingSenderId: "917055386010",
+            appId: "1:917055386010:web:3f27d9173e3dd7fbdf8a23"
+        };
+
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+    </script>
+</head>
+
+<body>
+    <main class="container">
+        <form id="loginForm">
+            <h1>Supernova</h1>
+            <div class="input-box">
+                <label for="email" class="sr-only">E-mail</label>
+                <input id="email" placeholder="E-mail" type="email" required>
+                <i class="bx bxs-user"></i>
+            </div>
+            <div class="input-box">
+                <label for="senha" class="sr-only">Senha</label>
+                <input id="senha" placeholder="Senha" type="password" required>
+                <i class="bx bxs-lock-alt"></i>
+            </div>
+
+            <div class="remember-forgot">
+                <label>
+                    <input type="checkbox">
+                    Lembrar senha
+                </label>
+                <a href="#">Esqueci a senha</a>
+            </div>
+
+            <button type="submit" class="login">Login</button>
+
+            <div class="register-link">
+                <p>Não tem uma conta? <a href="./registrar.html">Cadastre-se</a></p>
+            </div>
+        </form>
+    </main>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+            
+            auth.signInWithEmailAndPassword(email, senha)
+                .then(async (userCredential) => {
+                    const userDoc = await db.collection('usuarios').doc(userCredential.user.uid).get();
+                    
+                    if (!userDoc.exists || !userDoc.data().classe) {
+                        window.location.href = 'escolher-classe.html';
+                    } else {
+                        window.location.href = 'menu.html';
+                    }
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    
+                    if (errorCode === 'auth/user-not-found') {
+                        alert('Usuário não encontrado. Verifique seu e-mail.');
+                    } else if (errorCode === 'auth/wrong-password') {
+                        alert('Senha incorreta. Tente novamente.');
+                    } else if (errorCode === 'auth/invalid-email') {
+                        alert('E-mail inválido.');
+                    } else {
+                        alert('Erro ao fazer login: ' + errorMessage);
+                    }
+                });
+        });
+    </script>
+</body>
+
+</html>
