@@ -4,25 +4,129 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="menu.css">
-    <title>Menu Principal - RPG</title>
+    <title>Menu Principal - Seleção de Classe</title>
     <style>
-        /* Adicionando estilos para os submenus */
-        .submenu {
-            display: none;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .main-container {
+            display: flex;
+            width: 100%;
+            max-width: 1200px;
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .character-panel {
+            width: 30%;
+            padding: 25px;
+            background: rgba(30, 41, 59, 0.6);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .portrait-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .character-gif {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #4f46e5;
+            box-shadow: 0 0 20px rgba(79, 70, 229, 0.5);
+        }
+
+        .character-stats {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .character-name {
+            font-size: 22px;
+            margin-bottom: 5px;
+            color: #e2e8f0;
+        }
+
+        .character-class {
+            font-size: 16px;
+            color: #94a3b8;
+            margin-bottom: 15px;
+        }
+
+        .stat-bar {
+            margin-bottom: 12px;
+        }
+
+        .stat-bar label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #cbd5e1;
+        }
+
+        .bar-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .bar {
+            height: 8px;
+            border-radius: 4px;
+            background: #4f46e5;
+            transition: width 0.5s ease;
+        }
+
+        .hp-bar {
+            background: linear-gradient(90deg, #ef4444 0%, #f87171 100%);
+        }
+
+        .mana-bar {
+            background: linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%);
+        }
+
+        .xp-bar {
+            background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
+        }
+
+        .bar-container span {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .character-menu {
+            display: flex;
             flex-direction: column;
             gap: 10px;
-            margin-top: 10px;
-            animation: fadeIn 0.3s ease-out;
         }
-        
-        .submenu.active {
-            display: flex;
-        }
-        
-        .submenu-btn {
+
+        .char-btn {
             padding: 12px;
-            background-color: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 6px;
             color: #fff;
@@ -34,33 +138,328 @@
             justify-content: center;
             gap: 8px;
         }
-        
-        .submenu-btn:hover {
-            background-color: rgba(255, 255, 255, 0.1);
+
+        .char-btn:hover {
+            background: rgba(79, 70, 229, 0.2);
             transform: translateY(-2px);
         }
-        
-        .hunting-btn:hover {
-            border-color: #55ff55;
-            color: #55ff55;
+
+        .main-menu {
+            width: 70%;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
         }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+
+        .game-title {
+            font-size: 32px;
+            text-align: center;
+            margin-bottom: 10px;
+            color: #e2e8f0;
+            text-shadow: 0 0 10px rgba(79, 70, 229, 0.7);
         }
-        
-        .hunting-field-btn {
-            background-color: rgba(85, 255, 85, 0.1);
+
+        .welcome-message {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #94a3b8;
+            font-size: 18px;
         }
-        
-        .hunting-field-btn:hover {
-            background-color: rgba(85, 255, 85, 0.2);
+
+        .classes-container {
+            display: flex;
+            flex-grow: 1;
+            gap: 20px;
+        }
+
+        .class-detail-panel {
+            width: 40%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .class-detail-card {
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            border-left: 5px solid #4f46e5;
+        }
+
+        .placeholder-text {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            color: #64748b;
+            text-align: center;
+        }
+
+        .placeholder-text i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            opacity: 0.7;
+        }
+
+        .class-detail-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .class-detail-header img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            margin-right: 15px;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 10px;
+        }
+
+        .class-detail-title {
+            font-size: 24px;
+            margin: 0;
+            color: #e2e8f0;
+        }
+
+        .class-detail-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            color: #cbd5e1;
+        }
+
+        .stat-item i {
+            margin-right: 5px;
+            color: #4f46e5;
+        }
+
+        .class-detail-description {
+            font-size: 14px;
+            margin-bottom: 15px;
+            line-height: 1.5;
+            color: #94a3b8;
+        }
+
+        .class-detail-abilities {
+            margin-top: 15px;
+        }
+
+        .ability-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 8px;
+        }
+
+        .ability-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #e2e8f0;
+        }
+
+        .ability-desc {
+            font-size: 12px;
+            opacity: 0.8;
+            color: #94a3b8;
+        }
+
+        .class-grid-container {
+            width: 60%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .class-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            padding: 10px;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        .class-icon {
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            aspect-ratio: 1/1;
+        }
+
+        .class-icon:hover {
+            transform: translateY(-5px);
+            border-color: rgba(79, 70, 229, 0.5);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .class-icon.selected {
+            border-color: #4f46e5;
+            background: rgba(79, 70, 229, 0.2);
+            box-shadow: 0 0 20px rgba(79, 70, 229, 0.5);
+        }
+
+        .class-icon img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            margin-bottom: 10px;
+        }
+
+        .class-icon span {
+            font-size: 14px;
+            text-align: center;
+            color: #e2e8f0;
+            font-weight: 500;
+        }
+
+        .class-icon.locked {
+            opacity: 0.3;
+            filter: grayscale(1);
+            cursor: not-allowed;
+        }
+
+        .locked-class {
+            background: rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .locked-class i {
+            font-size: 24px;
+            color: #64748b;
+        }
+
+        .start-button-container {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .start-btn {
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(79, 70, 229, 0.4);
+        }
+
+        .start-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.6);
+        }
+
+        .start-btn:disabled {
+            background: #475569;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .logout-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+
+        .logout-btn {
+            padding: 10px 15px;
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 6px;
+            color: #ef4444;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #4f46e5;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 900px) {
+            .main-container {
+                flex-direction: column;
+            }
+            
+            .character-panel, .main-menu {
+                width: 100%;
+            }
+            
+            .classes-container {
+                flex-direction: column;
+            }
+            
+            .class-detail-panel, .class-grid-container {
+                width: 100%;
+            }
+            
+            .class-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .class-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
     </style>
 </head>
 
 <body>
+    <div class="logout-container">
+        <button class="logout-btn" id="logout-btn">
+            <i class='bx bx-log-out'></i> Sair
+        </button>
+    </div>
+
     <main class="main-container">
         <!-- Painel do Personagem (Esquerda) -->
         <div class="character-panel">
@@ -69,22 +468,22 @@
             </div>
             
             <div class="character-stats">
-                <h2 class="character-name" id="nome-personagem">Carregando...</h2>
-                <p class="character-class" id="classe-personagem">-</p>
+                <h2 class="character-name" id="nome-personagem">Aventureiro</h2>
+                <p class="character-class" id="classe-personagem">Selecione uma classe</p>
                 
                 <div class="stat-bar">
                     <label>HP:</label>
                     <div class="bar-container">
-                        <div class="bar hp-bar" style="width: 0%"></div>
-                        <span>0/0</span>
+                        <div class="bar hp-bar" style="width: 100%"></div>
+                        <span>100/100</span>
                     </div>
                 </div>
                 
                 <div class="stat-bar">
                     <label>Mana:</label>
                     <div class="bar-container">
-                        <div class="bar mana-bar" style="width: 0%"></div>
-                        <span>0/0</span>
+                        <div class="bar mana-bar" style="width: 100%"></div>
+                        <span>50/50</span>
                     </div>
                 </div>
                 
@@ -92,7 +491,7 @@
                     <label>XP:</label>
                     <div class="bar-container">
                         <div class="bar xp-bar" style="width: 0%"></div>
-                        <span>0/0</span>
+                        <span>0/100</span>
                     </div>
                 </div>
             </div>
@@ -106,41 +505,33 @@
         
         <!-- Menu Principal (Centro) -->
         <div class="main-menu">
-            <h1 class="game-title">Menu Principal</h1>
-            <p class="welcome-message" id="welcome-message">Carregando...</p>
+            <h1 class="game-title">Roguelike Adventures</h1>
+            <p class="welcome-message" id="welcome-message">Carregando suas classes...</p>
             
-            <div class="location-buttons">
-                <button class="location-btn city-btn">
-                    <i class='bx bx-buildings'></i> Cidade
-                </button>
-                
-                <!-- Botão de Campos de Caça -->
-                <button class="location-btn hunting-btn" id="hunting-btn">
-                    <i class='bx bx-map'></i> Campos de Caça
-                </button>
-                
-                <!-- Submenu de Campos de Caça -->
-                <div class="submenu" id="hunting-submenu">
-                    <button class="submenu-btn hunting-field-btn" id="field-c1">
-                        <i class='bx bx-leaf'></i> Campo C1
-                    </button>
-                    <button class="submenu-btn hunting-field-btn" disabled>
-                        <i class='bx bx-leaf'></i> Campo C2 (Em breve)
-                    </button>
-                    <button class="submenu-btn hunting-field-btn" disabled>
-                        <i class='bx bx-leaf'></i> Campo C3 (Em breve)
-                    </button>
+            <!-- Container para o sistema de classes -->
+            <div class="classes-container">
+                <!-- Painel de detalhes da classe (esquerda) -->
+                <div class="class-detail-panel">
+                    <div class="class-detail-card" id="class-detail-card">
+                        <div class="placeholder-text">
+                            <i class='bx bx-info-circle'></i>
+                            <p>Selecione uma classe para ver seus detalhes</p>
+                        </div>
+                    </div>
                 </div>
                 
-                <button class="location-btn dungeon-btn">
-                    <i class='bx bx-door-open'></i> Masmorras
-                </button>
-                <button class="location-btn boss-btn">
-                    <i class='bx bx-skull'></i> Boss
-                </button>
-                <button class="location-btn logout-btn">
-                    <i class='bx bx-log-out'></i> Deslogar
-                </button>
+                <!-- Grid de classes (direita) -->
+                <div class="class-grid-container">
+                    <div class="class-grid" id="class-grid">
+                        <div class="loading">
+                            <div class="loading-spinner"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="start-button-container">
+                <button class="start-btn" id="start-btn" disabled>Começar Aventura</button>
             </div>
         </div>
     </main>
@@ -150,7 +541,7 @@
         // Importações do Firebase
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js";
 
         // Configuração do Firebase
         const firebaseConfig = {
@@ -167,83 +558,260 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Sistema de XP e HP
-        const XpSystem = {
-            calculateMaxHp: function(level) {
-                return 100 + (Math.pow(level || 1, 2) * 2);
-            },
+        // Sistema de Classes
+        const ClassSystem = {
+            selectedClass: null,
+            allClasses: [],
+            unlockedClasses: [],
             
-            calculateXpNeeded: function(level) {
-                return 94495 * Math.pow(1.05826, level || 1);
-            },
-            
-            capitalizeFirstLetter: function(string) {
-                return string ? string.charAt(0).toUpperCase() + string.slice(1) : "";
-            },
-            
-            updateStatusBar: function(selector, current, max) {
-                if (current === undefined || max === undefined) return;
-                const percent = (current / max) * 100;
-                const bar = document.querySelector(selector);
-                if (bar) {
-                    bar.style.width = `${percent}%`;
-                    const span = bar.nextElementSibling;
-                    if (span) span.textContent = `${Math.floor(current)}/${Math.floor(max)}`;
+            // Carrega todas as classes disponíveis do Firebase
+            loadAllClasses: async function() {
+                try {
+                    const classesSnapshot = await getDocs(collection(db, "classes"));
+                    const classes = [];
+                    
+                    classesSnapshot.forEach((doc) => {
+                        classes.push({
+                            id: doc.id,
+                            ...doc.data()
+                        });
+                    });
+                    
+                    // Ordena as classes pelo ID
+                    return classes.sort((a, b) => a.id.localeCompare(b.id));
+                } catch (error) {
+                    console.error("Erro ao carregar classes:", error);
+                    return [];
                 }
             },
             
-            updatePlayerUI: function(playerData) {
+            // Carrega as classes desbloqueadas pelo usuário
+            loadUnlockedClasses: async function(userId) {
                 try {
-                    playerData = playerData || {};
+                    const userDoc = await getDoc(doc(db, "usuarios", userId));
                     
-                    // Atualiza textos básicos
-                    document.getElementById('nome-personagem').textContent = 
-                        playerData.nome || playerData.username || "Aventureiro";
-                    
-                    document.getElementById('classe-personagem').textContent = 
-                        `${this.capitalizeFirstLetter(playerData.classe || 'Aventureiro')} - Nível ${playerData.nivel || 1}`;
-                    
-                    document.getElementById('welcome-message').textContent = 
-                        `Bem-vindo de volta, ${playerData.nome || playerData.username || 'Aventureiro'}!`;
-                    
-                    // Atualiza barras de status
-                    const maxHp = this.calculateMaxHp(playerData.nivel);
-                    this.updateStatusBar('.hp-bar', playerData.hp || maxHp, maxHp);
-                    
-                    this.updateStatusBar('.mana-bar', playerData.mana || 0, playerData.mana_max || 100);
-                    
-                    const xpNeeded = this.calculateXpNeeded(playerData.nivel);
-                    this.updateStatusBar('.xp-bar', playerData.experiencia || 0, xpNeeded);
-                    
-                    // Atualiza imagem
-                    const img = document.getElementById('character-image');
-                    if (playerData.classe) {
-                        img.src = `./img/classes/${playerData.classe.toLowerCase()}.gif`;
-                        img.onerror = () => img.src = './img/classes/default.png';
+                    if (userDoc.exists()) {
+                        const userData = userDoc.data();
+                        return userData.classes_desbloqueadas || [];
                     }
+                    
+                    return [];
                 } catch (error) {
-                    console.error("Erro ao atualizar UI:", error);
+                    console.error("Erro ao carregar classes desbloqueadas:", error);
+                    return [];
+                }
+            },
+            
+            // Processa as habilidades (converte de string para objeto se necessário)
+            processHabilidades: function(habilidades) {
+                if (!habilidades) return [];
+                
+                // Se já é um array de objetos, retorna como está
+                if (Array.isArray(habilidades) && typeof habilidades[0] === 'object') {
+                    return habilidades;
+                }
+                
+                // Se é um array de strings, tenta converter para objetos
+                if (Array.isArray(habilidades) && typeof habilidades[0] === 'string') {
+                    return habilidades.map(habilidade => {
+                        try {
+                            // Tenta fazer parse da string JSON
+                            return JSON.parse(habilidade.replace(/(\w+):/g, '"$1":'));
+                        } catch (e) {
+                            // Se falhar, cria um objeto simples
+                            return { nome: habilidade, descricao: "Habilidade disponível" };
+                        }
+                    });
+                }
+                
+                return [];
+            },
+            
+            // Renderiza o grid de classes
+            renderClassGrid: function() {
+                const grid = document.getElementById('class-grid');
+                grid.innerHTML = '';
+                
+                // Cria um grid 4x4 (16 espaços)
+                for (let i = 0; i < 16; i++) {
+                    const classElement = document.createElement('div');
+                    
+                    if (i < this.allClasses.length) {
+                        const cls = this.allClasses[i];
+                        const isUnlocked = this.unlockedClasses.includes(cls.id);
+                        
+                        classElement.className = `class-icon ${isUnlocked ? '' : 'locked'}`;
+                        classElement.dataset.classId = cls.id;
+                        
+                        if (isUnlocked) {
+                            classElement.addEventListener('click', () => {
+                                this.selectClass(cls);
+                            });
+                            
+                            classElement.addEventListener('mouseenter', () => {
+                                this.showClassDetails(cls);
+                            });
+                        }
+                        
+                        classElement.innerHTML = `
+                            <img src="./img/classes/icone/${cls.id}.png" alt="${cls.nome}" 
+                                 onerror="this.src='./img/classes/default.png'">
+                            <span>${cls.nome}</span>
+                        `;
+                    } else {
+                        // Espaço vazio (classe não disponível)
+                        classElement.className = 'class-icon locked';
+                        classElement.innerHTML = `
+                            <div class="locked-class">
+                                <i class='bx bx-question-mark'></i>
+                            </div>
+                        `;
+                    }
+                    
+                    grid.appendChild(classElement);
+                }
+            },
+            
+            // Seleciona uma classe
+            selectClass: function(cls) {
+                this.selectedClass = cls;
+                
+                // Atualiza a UI para mostrar a seleção
+                document.querySelectorAll('.class-icon').forEach(icon => {
+                    icon.classList.remove('selected');
+                });
+                
+                document.querySelector(`.class-icon[data-class-id="${cls.id}"]`).classList.add('selected');
+                
+                // Habilita o botão de começar
+                document.getElementById('start-btn').disabled = false;
+                
+                // Atualiza o painel do personagem
+                document.getElementById('classe-personagem').textContent = cls.nome;
+                document.getElementById('character-image').src = `./img/classes/icone/${cls.id}.png`;
+                
+                // Atualiza as estatísticas
+                const hp = parseInt(cls.hp_base) || 100;
+                const mana = parseInt(cls.mana_base) || 50;
+                
+                document.querySelector('.hp-bar').style.width = '100%';
+                document.querySelector('.hp-bar').nextElementSibling.textContent = `${hp}/${hp}`;
+                
+                document.querySelector('.mana-bar').style.width = '100%';
+                document.querySelector('.mana-bar').nextElementSibling.textContent = `${mana}/${mana}`;
+            },
+            
+            // Exibe os detalhes da classe no painel esquerdo
+            showClassDetails: function(cls) {
+                const detailCard = document.getElementById('class-detail-card');
+                const habilidades = this.processHabilidades(cls.habilidades);
+                
+                // Formata as habilidades
+                let abilitiesHtml = '';
+                if (habilidades && habilidades.length > 0) {
+                    abilitiesHtml = `
+                        <div class="class-detail-abilities">
+                            <h4>Habilidades</h4>
+                            ${habilidades.map(ability => `
+                                <div class="ability-item">
+                                    <div class="ability-name">${ability.nome}</div>
+                                    <div class="ability-desc">${ability.descricao}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+                
+                const hp = parseInt(cls.hp_base) || 100;
+                const mana = parseInt(cls.mana_base) || 50;
+                const dano = parseInt(cls.dano_base) || 10;
+                
+                detailCard.innerHTML = `
+                    <div class="class-detail-header">
+                        <img src="./img/classes/icone/${cls.id}.png" alt="${cls.nome}" 
+                             onerror="this.src='./img/classes/default.png'">
+                        <h3 class="class-detail-title">${cls.nome}</h3>
+                    </div>
+                    
+                    <div class="class-detail-stats">
+                        <div class="stat-item">
+                            <i class='bx bx-heart'></i> HP: ${hp}
+                        </div>
+                        <div class="stat-item">
+                            <i class='bx bx-water'></i> Mana: ${mana}
+                        </div>
+                        <div class="stat-item">
+                            <i class='bx bx-crosshair'></i> Dano: ${dano}
+                        </div>
+                    </div>
+                    
+                    <div class="class-detail-description">
+                        ${cls.descricao || 'Sem descrição disponível.'}
+                    </div>
+                    
+                    ${abilitiesHtml}
+                `;
+                
+                // Aplica a cor do tema se existir
+                if (cls.cor_tema) {
+                    detailCard.style.borderLeftColor = cls.cor_tema;
+                }
+            },
+            
+            // Inicializa o sistema de classes
+            init: async function(userId) {
+                try {
+                    // Atualiza mensagem de boas-vindas
+                    document.getElementById('welcome-message').textContent = 'Carregando suas classes...';
+                    
+                    // Carrega dados do usuário
+                    const userDoc = await getDoc(doc(db, "usuarios", userId));
+                    if (userDoc.exists()) {
+                        const userData = userDoc.data();
+                        document.getElementById('welcome-message').textContent = `Bem-vindo, ${userData.nome || 'Aventureiro'}!`;
+                        document.getElementById('nome-personagem').textContent = userData.nome || 'Aventureiro';
+                    }
+                    
+                    // Carrega classes desbloqueadas e todas as classes
+                    const [unlockedClasses, allClasses] = await Promise.all([
+                        this.loadUnlockedClasses(userId),
+                        this.loadAllClasses()
+                    ]);
+                    
+                    this.unlockedClasses = unlockedClasses;
+                    this.allClasses = allClasses;
+                    
+                    // Renderiza o grid
+                    this.renderClassGrid();
+                    
+                    // Configura o botão de começar
+                    document.getElementById('start-btn').addEventListener('click', () => {
+                        if (this.selectedClass) {
+                            // Aqui você pode salvar a classe selecionada no Firebase
+                            // e depois redirecionar para run.html
+                            alert(`Classe ${this.selectedClass.nome} selecionada! Redirecionando para o jogo...`);
+                            window.location.href = 'run.html';
+                        }
+                    });
+                    
+                } catch (error) {
+                    console.error("Erro ao inicializar sistema de classes:", error);
+                    document.getElementById('welcome-message').textContent = 'Erro ao carregar classes.';
                 }
             }
         };
 
-        // Função para carregar dados do jogador
-        async function loadPlayerData(userId) {
-            try {
-                const userDoc = await getDoc(doc(db, "usuarios", userId));
-                
-                if (userDoc.exists()) {
-                    const userData = userDoc.data();
-                    XpSystem.updatePlayerUI(userData);
-                    return userData;
-                } else {
-                    console.error("Documento do usuário não encontrado");
-                    window.location.href = 'escolher-classe.html';
-                }
-            } catch (error) {
-                console.error("Erro ao carregar dados:", error);
+        // Configuração do botão de logout
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            if (confirm('Tem certeza que deseja sair?')) {
+                signOut(auth).then(() => {
+                    window.location.href = 'index.html';
+                }).catch((error) => {
+                    console.error("Erro ao deslogar:", error);
+                    alert("Erro ao deslogar. Por favor, tente novamente.");
+                });
             }
-        }
+        });
 
         // Monitora o estado de autenticação
         onAuthStateChanged(auth, (user) => {
@@ -252,40 +820,8 @@
                 return;
             }
             
-            // Carrega dados inicialmente
-            loadPlayerData(user.uid);
-            
-            // Configura listener para atualizações em tempo real
-            const userRef = doc(db, "usuarios", user.uid);
-            onSnapshot(userRef, (doc) => {
-                const userData = doc.data();
-                XpSystem.updatePlayerUI(userData);
-            });
-        });
-
-        // Logout
-        document.querySelector('.logout-btn').addEventListener('click', async (e) => {
-            e.preventDefault();
-            try {
-                await signOut(auth);
-                window.location.href = 'index.html';
-            } catch (error) {
-                console.error("Erro ao deslogar:", error);
-                alert("Erro ao deslogar. Por favor, tente novamente.");
-            }
-        });
-
-        // Controle do submenu de Campos de Caça
-        const huntingBtn = document.getElementById('hunting-btn');
-        const huntingSubmenu = document.getElementById('hunting-submenu');
-        const fieldC1Btn = document.getElementById('field-c1');
-
-        huntingBtn.addEventListener('click', () => {
-            huntingSubmenu.classList.toggle('active');
-        });
-
-        fieldC1Btn.addEventListener('click', () => {
-            window.location.href = 'zona-C1.html';
+            // Inicializa o sistema de classes
+            ClassSystem.init(user.uid);
         });
     </script>
 </body>
