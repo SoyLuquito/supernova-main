@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <title>Menu Principal - Seleção de Classe</title>
+    
+    <!-- Firebase SDK (usando a mesma versão do registro) -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -393,6 +399,23 @@
             }
         }
     </style>
+    
+    <script>
+        // Configuração do Firebase (igual à página de registro)
+        const firebaseConfig = {
+            apiKey: "AIzaSyBzdrAtJoBUONdyHsEPrzWDTH9FMg1xW78",
+            authDomain: "supernova-372bf.firebaseapp.com",
+            projectId: "supernova-372bf",
+            storageBucket: "supernova-372bf.appspot.com",
+            messagingSenderId: "917055386010",
+            appId: "1:917055386010:web:3f27d9173e3dd7fbdf8a23"
+        };
+        
+        // Inicialização do Firebase (usando a versão compat)
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+    </script>
 </head>
 
 <body>
@@ -438,29 +461,8 @@
         </div>
     </div>
 
-    <!-- Firebase SDK -->
-    <script type="module">
-        // Importações do Firebase
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js";
-
-        // Configuração do Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyBzdrAtJoBUONdyHsEPrzWDTH9FMg1xW78",
-            authDomain: "supernova-372bf.firebaseapp.com",
-            projectId: "supernova-372bf",
-            storageBucket: "supernova-372bf.appspot.com",
-            messagingSenderId: "917055386010",
-            appId: "1:917055386010:web:3f27d9173e3dd7fbdf8a23"
-        };
-
-        // Inicialização
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        // Sistema de Classes
+    <script>
+        // Sistema de Classes (atualizado para usar a versão compat do Firebase)
         const ClassSystem = {
             selectedClass: null,
             allClasses: [],
@@ -469,7 +471,7 @@
             // Carrega todas as classes disponíveis do Firebase
             loadAllClasses: async function() {
                 try {
-                    const classesSnapshot = await getDocs(collection(db, "classes"));
+                    const classesSnapshot = await db.collection("classes").get();
                     const classes = [];
                     
                     classesSnapshot.forEach((doc) => {
@@ -490,7 +492,7 @@
             // Carrega as classes desbloqueadas pelo usuário
             loadUnlockedClasses: async function(userId) {
                 try {
-                    const userDoc = await getDoc(doc(db, "usuarios", userId));
+                    const userDoc = await db.collection("usuarios").doc(userId).get();
                     
                     if (userDoc.exists()) {
                         const userData = userDoc.data();
@@ -657,7 +659,7 @@
                     document.getElementById('welcome-message').textContent = 'Carregando suas classes...';
                     
                     // Carrega dados do usuário
-                    const userDoc = await getDoc(doc(db, "usuarios", userId));
+                    const userDoc = await db.collection("usuarios").doc(userId).get();
                     if (userDoc.exists()) {
                         const userData = userDoc.data();
                         document.getElementById('welcome-message').textContent = `Bem-vindo, ${userData.nome || 'Aventureiro'}!`;
@@ -695,7 +697,7 @@
         // Configuração do botão de logout
         document.getElementById('logout-btn').addEventListener('click', () => {
             if (confirm('Tem certeza que deseja sair?')) {
-                signOut(auth).then(() => {
+                auth.signOut().then(() => {
                     window.location.href = 'index.html';
                 }).catch((error) => {
                     console.error("Erro ao deslogar:", error);
@@ -705,7 +707,7 @@
         });
 
         // Monitora o estado de autenticação
-        onAuthStateChanged(auth, (user) => {
+        auth.onAuthStateChanged((user) => {
             if (!user) {
                 window.location.href = 'index.html';
                 return;

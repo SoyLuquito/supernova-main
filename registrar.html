@@ -1,17 +1,222 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="registrar.css">
     <title>Registro - Supernova</title>
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 450px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: #fff;
+            padding: 25px;
+            box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, 
+                        rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
+            backdrop-filter: blur(5px);
+        }
+
+        .container h1 {
+            font-size: 28px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #e2e8f0;
+            text-shadow: 0 0 10px rgba(79, 70, 229, 0.7);
+        }
+
+        .input-box {
+            position: relative;
+            width: 100%;
+            margin: 15px 0;
+        }
+
+        .input-box input {
+            width: 100%;
+            height: 50px;
+            background-color: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 40px;
+            outline: none;
+            font-size: 16px;
+            color: #fff;
+            padding: 0 45px 0 20px;
+            transition: border-color 0.3s;
+        }
+
+        .input-box input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .input-box input:focus {
+            border-color: rgba(79, 70, 229, 0.8);
+        }
+
+        .input-box i {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+            color: #fff;
+        }
+
+        .terms {
+            display: flex;
+            justify-content: center;
+            margin: 15px 0;
+            font-size: 13px;
+            text-align: center;
+            color: #cbd5e1;
+        }
+
+        .terms label {
+            display: inline-flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            cursor: pointer;
+            line-height: 1.3;
+        }
+
+        .terms label input {
+            accent-color: #4f46e5;
+            flex-shrink: 0;
+        }
+
+        .terms a {
+            color: #4f46e5;
+            text-decoration: none;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .terms a:hover {
+            text-decoration: underline;
+        }
+
+        .register {
+            width: 100%;
+            height: 45px;
+            border: none;
+            outline: none;
+            border-radius: 40px;
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(79, 70, 229, 0.4);
+            margin-top: 10px;
+        }
+
+        .register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.6);
+        }
+
+        .login-link {
+            font-size: 14px;
+            text-align: center;
+            margin: 20px 0 15px;
+            color: #cbd5e1;
+        }
+
+        .login-link a {
+            text-decoration: none;
+            color: #4f46e5;
+            font-weight: 600;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            position: absolute;
+            bottom: -20px;
+            left: 20px;
+            font-size: 12px;
+            color: #ff6b6b;
+            width: calc(100% - 40px);
+        }
+
+        .register:disabled {
+            background: #475569;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Media Queries para Mobile */
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .container h1 {
+                font-size: 24px;
+            }
+            
+            .input-box {
+                margin: 12px 0;
+            }
+            
+            .input-box input {
+                height: 45px;
+                font-size: 15px;
+            }
+            
+            .terms {
+                font-size: 12px;
+            }
+            
+            .register {
+                height: 42px;
+                font-size: 15px;
+            }
+        }
+    </style>
     
     <script>
         const firebaseConfig = {
@@ -41,9 +246,15 @@
             </div>
             
             <div class="input-box">
+                <label for="nome" class="sr-only">Nome Completo</label>
+                <input id="nome" placeholder="Nome Completo" type="text" required>
+                <i class="bx bxs-user"></i>
+            </div>
+            
+            <div class="input-box">
                 <label for="usuario" class="sr-only">Nome de Usuário</label>
                 <input id="usuario" placeholder="Nome de Usuário" type="text" required>
-                <i class="bx bxs-user"></i>
+                <i class="bx bxs-user-circle"></i>
             </div>
             
             <div class="input-box">
@@ -79,6 +290,7 @@
             e.preventDefault();
             
             const email = document.getElementById('email').value;
+            const nome = document.getElementById('nome').value;
             const usuario = document.getElementById('usuario').value;
             const senha = document.getElementById('senha').value;
             const confirmarSenha = document.getElementById('confirmar-senha').value;
@@ -99,31 +311,34 @@
                 
                 // 2. Calcular valores iniciais de HP e XP
                 const nivelInicial = 1;
-                const hpInicial = 100 + Math.pow(nivelInicial, 2) * 2; // Fórmula: nível² × 2
-                const xpNecessarioProximoNivel = 94495 * Math.pow(1.05826, nivelInicial); // Fórmula: 94.495 × (1.05826)^nível
+                const hpInicial = 100 + Math.pow(nivelInicial, 2) * 2;
+                const xpNecessarioProximoNivel = 94495 * Math.pow(1.05826, nivelInicial);
                 
-                // 3. Salvar dados do jogador no Firestore
+                // 3. Salvar dados do jogador no Firestore com a estrutura solicitada
                 await db.collection('usuarios').doc(userCredential.user.uid).set({
-                    username: usuario,
-                    nome: usuario, // Pode ser alterado depois
-                    email: email,
                     criadoEm: firebase.firestore.FieldValue.serverTimestamp(),
-                    classe: null, // Será definido na escolha de classe
-                    personagem_criado: false,
+                    email: email,
+                    nome: nome,
+                    username: usuario,
+                    classes_desbloqueadas: ["#001", "#002", "#003", "#004"], // As 4 primeiras classes
+                    
+                    // Campos adicionais para o funcionamento do jogo
+                    classe: null,
                     nivel: nivelInicial,
                     experiencia: 0,
                     hp: hpInicial,
                     hp_max: hpInicial,
-                    mana: 100, // Valor padrão inicial
+                    mana: 100,
                     mana_max: 100,
                     nextLevelXp: xpNecessarioProximoNivel,
-                    gold: 0, // Dinheiro inicial
-                    equipamentos: {}, // Itens equipados
-                    inventario: [] // Itens no inventário
+                    gold: 0,
+                    equipamentos: {},
+                    inventario: [],
+                    personagem_criado: false
                 });
                 
                 // 4. Redirecionar para a página de escolher classe
-                window.location.href = './escolher-classe.html';
+                window.location.href = './menu.html'; // Redireciona direto para o menu principal
             } catch (error) {
                 let errorMessage = 'Erro ao registrar: ';
                 switch(error.code) {
@@ -146,7 +361,7 @@
             }
         });
 
-        // Função auxiliar para capitalizar a primeira letra (usada depois)
+        // Função auxiliar para capitalizar a primeira letra
         function capitalizeFirstLetter(string) {
             return string ? string.charAt(0).toUpperCase() + string.slice(1) : "";
         }
