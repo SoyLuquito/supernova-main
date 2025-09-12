@@ -466,7 +466,9 @@
                 });
 
                 if (enemies.length > 0) {
-                    return enemies[Math.floor(Math.random() * enemies.length)];
+                    // Seleciona um inimigo aleatoriamente com porcentagem igual
+                    const randomIndex = Math.floor(Math.random() * enemies.length);
+                    return enemies[randomIndex];
                 } else {
                     console.error("Nenhum inimigo encontrado nesta zona!");
                     return null;
@@ -609,12 +611,11 @@
         });
 
         victoryBtn.addEventListener('click', () => {
-            // Aqui você pode adicionar lógica para recompensas
-            window.location.href = 'mapa.html'; // Ou outra página
+            window.location.href = 'menu.html'; // Redireciona para o menu após vitória
         });
 
         defeatBtn.addEventListener('click', () => {
-            window.location.href = 'menu.html';
+            window.location.href = 'menu.html'; // Redireciona para o menu após derrota
         });
 
         // Inicializar o combate
